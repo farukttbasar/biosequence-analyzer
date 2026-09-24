@@ -1,4 +1,4 @@
-from sequence import BaseSequence
+from source.sequence import BaseSequence
 
 def calculate_gc_content(seq_obj):
     if not isinstance(seq_obj, BaseSequence):

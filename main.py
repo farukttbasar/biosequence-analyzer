@@ -1,5 +1,5 @@
-from sequence import DNASequence, RNASequence
-from calculations import (
+from source.sequence import DNASequence, RNASequence
+from source.calculations import (
     calculate_gc_content,
     calculate_base_frequency,
     compare_sequences

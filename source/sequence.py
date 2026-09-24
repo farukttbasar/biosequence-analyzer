@@ -68,12 +68,21 @@ class DNASequence(BaseSequence):
             rna_name = f"{self.prefix}-RNA-{next_rna_no:03d}"
 
         return RNASequence(rna_sequence, rna_name)
-        
+ 
 
 class RNASequence(BaseSequence):
     counter = 0
     prefix = "RNA"
     valid_bases = frozenset(["A", "U", "G", "C"])
+
+    def complement(self):
+        complement_bases = {"A": "U", "U": "A", "G": "C", "C": "G"}
+        new_sequence = ""
+
+        for base in self.sequence:
+            new_sequence += complement_bases[base]
+
+        return new_sequence
 
     def to_dna(self, dna_name=None):
         dna_sequence = self.sequence.replace("U", "T")
