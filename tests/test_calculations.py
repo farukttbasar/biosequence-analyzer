@@ -6,82 +6,84 @@ from source.calculations import (
     compare_sequences
 )
 
-# DNA TESTS 
+# GC CONTENT TESTS
+@pytest.mark.parametrize("seq_cls, raw_seq, expected_gc", [
+    (DNASequence, "GGCC", 100.0),
+    (DNASequence, "CGTAGC", 66.67),
+    (DNASequence, "ATGC", 50.0),
+    (DNASequence, "AAAA", 0.0),
+    (RNASequence, "GGCC", 100.0),
+    (RNASequence, "GCAUCG", 66.67),
+    (RNASequence, "AUGC", 50.0),
+    (RNASequence, "UUUU", 0.0),
+])
+def test_calculate_gc_content(seq_cls, raw_seq, expected_gc):
+    obj = seq_cls(sequence=raw_seq)
+    assert calculate_gc_content(obj) == expected_gc
 
-def test_gc_content(dna_seq):
-    assert calculate_gc_content(dna_seq) == 66.67
-
-def test_dna_gc_calculate_type_error():
+@pytest.mark.parametrize("invalid_input", ["ATGC", "AUGC",])
+def test_gc_calculate_invalid_input_raises_error(invalid_input):
     with pytest.raises(TypeError):
-        calculate_gc_content("ATGC")
+        calculate_gc_content(invalid_input)
 
-def test_dna_calculate_base_frequency(dna_seq):
-    frequencies = calculate_base_frequency(dna_seq)
-    assert frequencies["A"] == round(1/6, 4)
-    assert frequencies["T"] == round(1/6, 4)
-    assert frequencies["G"] == round(2/6, 4)
-    assert frequencies["C"] == round(2/6, 4)
+# BASE FREQUENCY TESTS
+@pytest.mark.parametrize("seq_cls, raw_seq, the_different_base", [
+    (DNASequence, "CGTAGC", "T"),
+    (RNASequence, "GCAUCG", "U"),
+])
+def test_calculate_base_frequency(seq_cls, raw_seq, the_different_base):
+    obj = seq_cls(sequence=raw_seq)
+    frequencies = calculate_base_frequency(obj)
 
-def test_dna_compare_sequences():
-    seq1 = DNASequence(sequence="ATGC")
-    seq2 = DNASequence(sequence="ATCC")
+    assert frequencies["A"] == round(1 / 6, 4)
+    assert frequencies[the_different_base] == round(1 / 6, 4)
+    assert frequencies["G"] == round(2 / 6, 4)
+    assert frequencies["C"] == round(2 / 6, 4)
 
+@pytest.mark.parametrize("invalid_input", ["ATGC", "AUGC"])
+def test_base_frequency_invalid_input_raises_error(invalid_input):
+    with pytest.raises(TypeError):
+        calculate_base_frequency(invalid_input)
+
+# COMPARE SEQUENCES TESTS
+@pytest.mark.parametrize("seq_cls, seq1_str, seq2_str, expected_matches, expected_mismatches", [
+    (DNASequence, "ATGC", "ATGC", 4, 0),
+    (DNASequence, "ATGC", "ATCC", 3, 1),
+    (DNASequence, "AAAA", "TTTT", 0, 4),
+    (RNASequence, "AUGC", "AUGC", 4, 0),
+    (RNASequence, "AUGC", "AUCC", 3, 1),
+    (RNASequence, "AAAA", "UUUU", 0, 4),
+])
+def test_compare_sequences(seq_cls, seq1_str, seq2_str, expected_matches, expected_mismatches):
+    seq1 = seq_cls(sequence=seq1_str)
+    seq2 = seq_cls(sequence=seq2_str)
     result = compare_sequences(seq1, seq2)
 
-    assert result["Length"] == 4
-    assert result["Matches"] == 3
-    assert result["Mismatches"] == 1
+    assert result["Length"] == len(seq1_str)
+    assert result["Matches"] == expected_matches
+    assert result["Mismatches"] == expected_mismatches
 
-def test_dna_compare_sequences_not_equal_raises_error():
-    seq1 = DNASequence("ATGC")
-    seq2 = DNASequence("ATC")
-
+@pytest.mark.parametrize("seq_cls, seq1_str, seq2_str", [
+    (DNASequence, "ATGC", "ATC"),
+    (RNASequence, "AUGC", "AUC"),
+    (DNASequence, "A", "AA"),
+    (RNASequence, "A", "AA"),
+])
+def test_compare_sequences_not_equal_length_raises_error(seq_cls, seq1_str, seq2_str):
+    seq1 = seq_cls(seq1_str)
+    seq2 = seq_cls(seq2_str)
     with pytest.raises(ValueError):
         compare_sequences(seq1, seq2)
 
-def test_dna_compare_type_error():
-    with pytest.raises(TypeError):
-        compare_sequences(DNASequence(sequence="ATGC"), "ATGC")
+@pytest.mark.parametrize("seq_cls, valid_seq", [
+    (DNASequence, "ATGC"),
+    (RNASequence, "AUGC"),
+])
+def test_compare_type_error(seq_cls, valid_seq):
+    obj = seq_cls(sequence=valid_seq)
 
     with pytest.raises(TypeError):
-        compare_sequences("ATGC", DNASequence(sequence="ATGC"))
-
-# RNA TESTS
-
-def test_rna_gc_content(rna_seq):
-    assert calculate_gc_content(rna_seq) == 66.67
-
-def test_rna_gc_calculate_type_error():
-    with pytest.raises(TypeError):
-        calculate_gc_content("AUGC")
-
-def test_rna_calculate_base_frequency(rna_seq):
-    frequencies = calculate_base_frequency(rna_seq)
-    assert frequencies["A"] == round(1/6, 4)
-    assert frequencies["U"] == round(1/6, 4)
-    assert frequencies["G"] == round(2/6, 4)
-    assert frequencies["C"] == round(2/6, 4)
-
-def test_rna_compare_sequences():
-    seq1 = RNASequence(sequence="AUGC")
-    seq2 = RNASequence(sequence="AUCC")
-
-    result = compare_sequences(seq1, seq2)
-
-    assert result["Length"] == 4
-    assert result["Matches"] == 3
-    assert result["Mismatches"] == 1
-
-def test_rna_compare_sequences_not_equal_raises_error():
-    seq1 = RNASequence(sequence="AUGC")
-    seq2 = RNASequence(sequence="AUC")
-
-    with pytest.raises(ValueError):
-        compare_sequences(seq1, seq2)
-
-def test_rna_compare_type_error():
-    with pytest.raises(TypeError):
-        compare_sequences(RNASequence(sequence="AUGC"), "AUGC")
+        compare_sequences(obj, valid_seq)
 
     with pytest.raises(TypeError):
-        compare_sequences("AUGC", RNASequence(sequence="AUGC"))
+        compare_sequences(valid_seq, obj)
