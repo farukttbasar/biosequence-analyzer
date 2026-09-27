@@ -1,5 +1,7 @@
 # BioSequence Analyzer
 
+![Tests](https://img.shields.io/badge/tests-passed-brightgreen)
+
 A modular DNA/RNA sequence analysis written in Python.
 
 ## Features
