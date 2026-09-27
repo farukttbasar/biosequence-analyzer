@@ -1,4 +1,5 @@
 import textwrap
+import random
 
 class BaseSequence:
     counter = 0
@@ -28,6 +29,32 @@ class BaseSequence:
 
     def base_counts(self):
         return {base: self._sequence.count(base) for base in self.valid_bases}
+
+    @classmethod
+    def create_random(cls, length=100, gc_content=0.5, name=None):
+        if length <= 0:
+            raise ValueError("Sequence length must be positive.")
+        if not (0.0 <= gc_content <= 1):
+            raise ValueError("GC content must be between 0.0 - 1.0.")
+
+        probability_g = gc_content / 2.00
+        probability_c = gc_content / 2.00
+        probability_others = (1.00 - gc_content) / 2.00
+
+        if "T" in cls.valid_bases:
+            bases = ["A", "T", "G", "C"]
+            prob = [probability_others, probability_others, probability_g, probability_c]
+        elif "U" in cls.valid_bases:
+            bases = ["A", "U", "G", "C"]
+            prob = [probability_others, probability_others, probability_g, probability_c]
+        else:
+            raise TypeError(f"Creating random sequence is not available for the class {cls.__name__}.")
+
+        raw_sequence = "".join(random.choices(bases, weights=prob, k=length))
+
+        next_counter = cls.counter + 1
+        random_name = f"RANDOM-{cls.prefix}-{next_counter:03d}"
+        return cls(raw_sequence, name=random_name)
 
     def __str__(self):
         wrapped_sequence = textwrap.fill(self._sequence, width=60)

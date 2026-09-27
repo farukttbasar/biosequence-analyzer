@@ -7,17 +7,18 @@ from source.calculations import (
 
 def show_menu():
     print("\n" + "=" * 35)
-    print("      SEQUENCE ANALYSIS SYSTEM      ")
+    print("         SEQUENCE ANALYSIS SYSTEM      ")
     print("=" * 35)
-    print("| 1. Create DNA sequence            |")
-    print("| 2. Create RNA sequence            |")
-    print("| 3. Show sequence (FASTA)          |")
-    print("| 4. Count bases & frequencies      |")
-    print("| 5. Calculate GC content           |")
-    print("| 6. Find complement                |")
-    print("| 7. Convert sequence (DNA <-> RNA) |")
-    print("| 8. Compare sequences              |")
-    print("| 9. Exit                           |")
+    print("| 1. Create DNA sequence                |")
+    print("| 2. Create RNA sequence                |")
+    print("| 3. Create random sequence (DNA | RNA) |")
+    print("| 4. Show sequence (FASTA)              |")
+    print("| 5. Count bases & frequencies          |")
+    print("| 6. Calculate GC content               |")
+    print("| 7. Find complement                    |")
+    print("| 8. Convert sequence (DNA <-> RNA)     |")
+    print("| 9. Compare sequences                  |")
+    print("| 10. Exit                              |")
     print("=" * 35)
 
 def select_sequence(sequences, prompt="Select a sequence > "):
@@ -25,7 +26,7 @@ def select_sequence(sequences, prompt="Select a sequence > "):
         print("No sequences found in the system.")
         return None
     
-    print("\n--- Registered Sequences ---")
+    print("\n---- Registered Sequences ----")
     keys = list(sequences.keys())
 
     for idx, key in enumerate(keys, 1): # idx= 1,2,3,... | key= DNA-001, RNA-002, ...
@@ -46,9 +47,10 @@ def main():
 
     while True:
         show_menu()
-        choice = input("Please select an option (1-9): ").strip()
+        choice = input("Please select an option (1-10): ").strip()
 
         if choice == "1":
+            print("---- CREATE DNA SEQUENCE ----")
             try:
                 dna_seq_str = input("Enter DNA sequence (A, T, G, C) > ").strip().upper()
             except ValueError as e:
@@ -64,6 +66,7 @@ def main():
                 print(f"Error: {e}")
 
         elif choice == "2":
+            print("---- CREATE RNA SEQUENCE ----")
             rna_seq_str = input("Enter RNA sequence (A, U, G, C) > ").strip().upper()
             rna_name_str = input("Enter a sequence name (Optional, press Enter to skip) > ").strip()
             name = rna_name_str if rna_name_str else None
@@ -76,13 +79,53 @@ def main():
                 print(f"Error: {e}")
 
         elif choice == "3":
+            print("---- CREATE RANDOM SEQUENCE (DNA | RNA) ----")
+            type_choice = input("Select the type [1: DNA | 2: RNA] (Default: 1) > ").strip()
+
+            if type_choice == "2":
+                target_class = RNASequence
+                target_prefix = "RNA"
+            elif type_choice == "1":
+                target_class = DNASequence
+                target_prefix = "DNA"
+            else:
+                target_class = DNASequence
+                target_prefix = "DNA"
+                print("Invalid choice. Using default value: DNA")
+
+            len_str = input("Enter length [Default: 100] > ").strip()
+            gc_str = input("Enter GC content (0.0 - 1.0) [Default: 0.5] > ").strip()
+
+            try:
+                length = int(len_str) if len_str else 100
+            except ValueError:
+                print("Invalid length. Using default value: 100")
+                length = 100
+
+            try:
+                gc_content = float(gc_str) if gc_str else 0.5
+            except ValueError:
+                print("Invalid GC content. Using default value: 0.5")
+                gc_content = 100
+
+            try: 
+                random_seq = target_class.create_random(length=length, gc_content=gc_content)
+                sequences[random_seq.name] = random_seq
+                print(f"Random {target_prefix} sequence created successfully: {random_seq.name}")
+                print(random_seq)
+            except (ValueError, TypeError) as e:
+                print("Error: {e}")        
+
+        elif choice == "4":
+            print("---- SHOW SEQUENCE (FASTA) ----")
             seq_obj = select_sequence(sequences)
 
             if seq_obj:
                 print("\n--- FASTA Format ---")
                 print(seq_obj)
 
-        elif choice == "4":
+        elif choice == "5":
+            print("---- COUNT BASES & FREQUENCIES ----")
             seq_obj = select_sequence(sequences)
             if seq_obj:
                 counts = seq_obj.base_counts()
@@ -94,13 +137,15 @@ def main():
                     freq = frequencies.get(base, 0.0)
                     print(f"{base:<6} {count:<8} {freq:<18.4f}")
 
-        elif choice == "5":
+        elif choice == "6":
+            print("---- CALCULATE GC CONTENT ----")
             seq_obj = select_sequence(sequences)
             if seq_obj:
                 gc = calculate_gc_content(seq_obj)
                 print(f"{seq_obj.name} GC CONTENT: {gc}%")
 
-        elif choice == "6":
+        elif choice == "7":
+            print("---- FIND COMPLEMENT ----")
             seq_obj = select_sequence(sequences)
             if seq_obj:
                 if isinstance(seq_obj, DNASequence):
@@ -110,7 +155,8 @@ def main():
                 else:
                     print("Error: The complement operation is only supported for DNA sequences.")
 
-        elif choice == "7":
+        elif choice == "8":
+            print("---- CONVERT SEQUENCES (DNA <-> RNA) ----")
             seq_obj = select_sequence(sequences, "Select a sequence to convert > ")
             if seq_obj:
                 if isinstance(seq_obj, DNASequence):
@@ -127,7 +173,8 @@ def main():
                     print(f"New DNA Object : {converted_obj.name}")
                     print(f"DNA Sequence   : {converted_obj.sequence}")
 
-        elif choice == "8":
+        elif choice == "9":
+            print("---- COMPARE SEQUENCES ----")
             if len(sequences) < 2:
                 print("You must have at least 2 registered sequences to perform a comparison.")
                 continue
@@ -152,7 +199,7 @@ def main():
                 print(f"Error: {e}")
 
 
-        elif choice == "9":
+        elif choice == "10":
             print("Exiting program...")
             break
 

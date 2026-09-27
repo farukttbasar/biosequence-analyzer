@@ -1,6 +1,42 @@
 import pytest
-from source.sequence import DNASequence, RNASequence
+from source.sequence import DNASequence, RNASequence, BaseSequence
 
+# RANDOM CREATING TESTS
+def test_create_random_dna():
+    length = 2000 # Used 2000 to avoid flaky test failures from variance.
+    dna = DNASequence.create_random(length=length, gc_content=0.5)
+    assert isinstance(dna, DNASequence)
+    assert len(dna) == 2000
+    assert "U" not in dna.sequence
+    assert dna.name.startswith("RANDOM-DNA")
+
+    actual_dna_gc_content = (dna.sequence.count("G") + dna.sequence.count("C")) / length
+    assert actual_dna_gc_content == pytest.approx(0.5, abs=0.08)
+
+def test_create_random_rna():
+    length = 2000 # Used 2000 to avoid flaky test failures from variance.
+    rna = RNASequence.create_random(length=length, gc_content=0.5)
+    assert isinstance(rna, RNASequence)
+    assert len(rna) == 2000
+    assert "T" not in rna.sequence
+    assert rna.name.startswith("RANDOM-RNA")
+
+    actual_rna_gc_content = (rna.sequence.count("G") + rna.sequence.count("C")) / length
+    assert actual_rna_gc_content == pytest.approx(0.5, abs=0.08)
+
+def test_create_random_invalid_length_raises_error():
+    with pytest.raises(ValueError):
+        DNASequence.create_random(length=-50)
+        RNASequence.create_random(length=-50)
+
+def test_create_random_invalid_gc_content_raises_error():
+    with pytest.raises(ValueError):
+        DNASequence.create_random(gc_content=1.5)
+        RNASequence.create_random(gc_content=1.5)
+
+def test_create_random_invalid_class_raises_error():
+    with pytest.raises(TypeError):
+        BaseSequence.create_random(length=100, gc_content=0.5)
 # DNA TESTS
 
 def test_dna_creation(sample_dna):
