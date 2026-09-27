@@ -1,7 +1,5 @@
 # BioSequence Analyzer
 
-![Tests](https://img.shields.io/badge/tests-passed-brightgreen)
-
 A modular DNA/RNA sequence analysis written in Python.
 
 ## Features
@@ -14,6 +12,7 @@ A modular DNA/RNA sequence analysis written in Python.
   - Pairwise sequence alignment and match/mismatch verification
   - Transcription (DNA -> RNA) and reverse transcription (RNA -> DNA)
 - **FASTA Export**: Automatic text formatting compliant with standard FASTA line wrapping (60 characters).
+- **Automated Testing**: Comprehensive tests using parameterized Pytest to validate calculations, sequences, and error handling. ![Tests](https://img.shields.io/badge/tests-passed-brightgreen)
 
 ## Quickstart
 
