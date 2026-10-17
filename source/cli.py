@@ -25,10 +25,10 @@ def parser_cli():
 
     parser.add_argument(
         "--action",
-        choices=[1, 2, 3, 4, 5],
+        choices=[1, 2, 3, 4, 5, 6],
         type=int,
         default=5,
-        help="Analyse action: 1. gc_ratio, 2. frequencies, 3. complement, 4. convert, or 5. all of them (default: all)"
+        help="Analyse action: 1. gc_ratio, 2. frequencies, 3. complement, 4. convert, 5. all, 6. compare (default: 5)"
     )
 
     parser.add_argument(
@@ -36,6 +36,13 @@ def parser_cli():
         "--random",
         action="store_true",
         help="Generate a random sequence instead of providing manually."
+    )
+
+    parser.add_argument(
+        "-c2",
+        "--compare-with",
+        type=str,
+        help="Second sequence string to compare with the primary sequence."
     )
 
     parser.add_argument(
@@ -130,16 +137,27 @@ def get_interactive_input():
     print("2. Calculate Base Frequency")
     print("3. Find the Complement")
     print("4. Convert (DNA <=> RNA)")
-    print("5. All")
+    print("5. All Analyses (1 to 4)")
+    print("6. Compare Sequences")
 
 
     choice = get_input(
         "Select an action (default: '5. All')",
-        "Please select between 1 - 5 (inclusive)!",
+        "Please select between 1 - 6 (inclusive)!", 
         int,
         default=5,
-        validator=lambda x: 1 <= x <= 5
+        validator=lambda x: 1 <= x <= 6 
     )
+
+    compare_with = None
+
+    if choice == 6:
+        compare_with = get_input(
+            f"Enter second {seq_type.upper()} sequence for comparison",
+            f"Valid bases are {valid_bases} for {seq_type.upper()}",
+            str,
+            validator=lambda x: len(x) > 0 and set(x.upper()).issubset(valid_bases)
+        ).upper()
 
     return argparse.Namespace(
         sequence = sequence,
@@ -147,5 +165,6 @@ def get_interactive_input():
         action = choice,
         random = is_random,
         length = length,
-        gc_ratio = gc_ratio
+        gc_ratio = gc_ratio,
+        compare_with=compare_with
     )    

@@ -6,9 +6,9 @@ from source.calculations import (
     compare_sequences
 )
 
-def run_calculations(seq_obj, action):
+def run_calculations(seq_obj, action, second_seq_obj=None):
     print(f"🧬 Working on {seq_obj.name}")
-    print(f"Sequence ({seq_obj.sequence})")
+    print(f"🧬 SEQUENCE DETAILS (FASTA):\n{seq_obj}")
     print("=" * 50)
 
     if action == 5 or action == 1:
@@ -35,6 +35,19 @@ def run_calculations(seq_obj, action):
         else:
             print(f"> Reverse Transcription (RNA => DNA): {seq_obj.to_dna().sequence}\n")
 
+    if action == 6:
+        if second_seq_obj is None:
+            print("Error --> A second sequence (-c2 / --compare-with) is required for comparison.\n")
+        else:
+            try:
+                res = compare_sequences(seq_obj, second_seq_obj)
+                print(f"--- Comparison Result ({seq_obj.name} vs {second_seq_obj.name}) ---")
+                print(f"Total Length : {res['Length']}")
+                print(f"Matches      : {res['Matches']}")
+                print(f"Mismatches   : {res['Mismatches']}\n")
+            except ValueError as e:
+                print(f"Comparison Error: {e}\n")
+
     print("=" * 50)
 
 def main():
@@ -52,9 +65,15 @@ def main():
         else:
             seq_obj = seq_class(args.sequence.upper())
 
-        run_calculations(seq_obj, args.action)
+        second_seq_obj = None
+        if getattr(args, "compare_with", None):
+            second_seq_obj = seq_class(args.compare_with.upper())
+
+        run_calculations(seq_obj, args.action, second_seq_obj)
     except (ValueError, TypeError) as e:
         print(f"Error --> {e}")
+
+    
 
 if __name__ == "__main__":
     main()
