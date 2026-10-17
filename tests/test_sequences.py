@@ -123,5 +123,3 @@ def test_rna_reverse_transcription_to_dna():
     assert isinstance(dna, DNASequence)
     assert dna.sequence == "ATGC"
     assert dna.name.startswith("RNA-DNA-")
-
-

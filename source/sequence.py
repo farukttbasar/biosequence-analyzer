@@ -119,4 +119,3 @@ class RNASequence(BaseSequence):
             dna_name = f"{self.prefix}-DNA-{next_dna_no:03d}"
 
         return DNASequence(dna_sequence, dna_name)
-
