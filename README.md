@@ -10,6 +10,7 @@ A modular DNA/RNA sequence analysis written in Python.
   - GC-content percentage calculation
   - Relative nucleotide base frequency calculation
   - Pairwise sequence alignment and match/mismatch verification
+  - Complement and reverse complement of DNA/RNA sequences
   - Transcription (DNA -> RNA) and reverse transcription (RNA -> DNA)
 - **FASTA Export**: Automatic text formatting compliant with standard FASTA line wrapping (60 characters).
 - **Automated Testing**: Comprehensive tests using parameterized Pytest to validate calculations, sequences, and error handling. ![Tests](https://img.shields.io/badge/tests-passed-brightgreen)
@@ -20,3 +21,10 @@ Run the interactive console program:
 
 ```bash
 python main.py
+```
+Or run a single action directly (e.g. complement and reverse complement):
+
+```bash
+python main.py -s ATGC --action 3
+```
+

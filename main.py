@@ -28,6 +28,8 @@ def run_calculations(seq_obj, action, second_seq_obj=None):
 
     if action == 5 or action == 3:
         print(f"> Complement: {seq_obj.complement()}\n")
+        print(f"> Reverse Complement: {seq_obj.reverse_complement()}\n")
+
 
     if action == 5 or action == 4:
         if isinstance(seq_obj, DNASequence):

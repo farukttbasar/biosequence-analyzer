@@ -30,6 +30,9 @@ class BaseSequence:
     def base_counts(self):
         return {base: self._sequence.count(base) for base in self.valid_bases}
 
+    def reverse_complement(self):
+        return self.complement()[::-1]
+
     @classmethod
     def create_random(cls, length=100, gc_content=0.5, name=None):
         if length <= 0:

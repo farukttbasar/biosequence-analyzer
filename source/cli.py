@@ -28,7 +28,7 @@ def parser_cli():
         choices=[1, 2, 3, 4, 5, 6],
         type=int,
         default=5,
-        help="Analyse action: 1. gc_ratio, 2. frequencies, 3. complement, 4. convert, 5. all, 6. compare (default: 5)"
+        help="Analyse action: 1. gc_ratio, 2. frequencies, 3. complement & reverse complement, 4. convert, 5. all, 6. compare (default: 5)"
     )
 
     parser.add_argument(
@@ -135,7 +135,7 @@ def get_interactive_input():
     print("\n--- ACTIONS ---")
     print("1. Calculate GC Content")
     print("2. Calculate Base Frequency")
-    print("3. Find the Complement")
+    print("3. Find the Complement and Reverse Complement")
     print("4. Convert (DNA <=> RNA)")
     print("5. All Analyses (1 to 4)")
     print("6. Compare Sequences")

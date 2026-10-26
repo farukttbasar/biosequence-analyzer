@@ -109,6 +109,17 @@ def test_complement(seq_cls, raw_seq, expected_complement):
     obj = seq_cls(sequence=raw_seq)
     assert obj.complement() == expected_complement
 
+@pytest.mark.parametrize("seq_cls, raw_seq, expected", [
+    (DNASequence, "ATGC", "GCAT"),
+    (RNASequence, "AUGC", "GCAU"),
+    (DNASequence, "AATTGGCC", "GGCCAATT"),
+    (DNASequence, "GAATTC", "GAATTC"),
+])
+def test_reverse_complement(seq_cls, raw_seq, expected):
+    obj = seq_cls(sequence=raw_seq)
+    assert obj.reverse_complement() == expected
+
+
 def test_dna_transcription_to_rna():
     dna = DNASequence(sequence="ATGC")
     rna = dna.to_rna()
